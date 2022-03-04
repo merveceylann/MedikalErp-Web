@@ -1,0 +1,42 @@
+﻿@model IEnumerable<ProductEntryDistinctDto>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<a class="btn btn-primary mb-4 col-md-2" asp-action="Create">Product Adding</a>
+<table id="example" class="display" style="width:100%">
+    <thead>
+    <tr>
+        @*<th>Id</th>*@
+        @*<th>Company Id</th>*@
+        <th>Company Name</th>
+        <th>Entry Date</th>
+        <th>Invoice Number</th>
+        <th>Islemler</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            @*<td class="col-md-1">@item.Id</td>*@
+            @*<td class="col-md-1">@item..CompanyId</td>*@
+            <td class="col-md-3">@item.CompanyName</td>
+            <td class="col-md-3">@item.EntryDate.ToShortDateString()</td>
+            <td class="col-md-2">@item.InvoiceNumber</td>
+            <td class="col-md-2">
+                <a class="btn btn-info btn-sm" asp-action="Details" asp-route-ivno="@item.InvoiceNumber">Details</a>
+                <a class="btn btn-warning btn-sm" asp-action="Update" asp-route-id="@item.Id">Update</a>
+                <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+
+
+
+

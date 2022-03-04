@@ -1,0 +1,55 @@
+﻿@model IEnumerable<ProductEntryDto>
+
+@{
+    ViewData["Title"] = "Details";
+}
+@foreach (var item in Model)
+{
+    <input type="text" readonly="true" value="@item.CompanyName"/>
+    <input type="text" readonly="true" value="@item.EntryDate.ToShortDateString()"/>
+    <input type="text" readonly="true" value="@item.InvoiceNumber"/>
+                                                break;
+}
+
+<a class="btn btn-primary mb-2 col-md-2 btn-sm" asp-action="Create">Product Adding</a>
+<table id="example" class="display" style="width:100%">
+    <thead>
+    <tr>
+        @*<th>Id</th>*@
+        @*<th>Company Id</th>*@
+        <th>Urun Kodu</th>
+        <th>Lot Serial No</th>
+        @*<th>Barcode</th>*@
+        @*<th>Entry Date</th>*@
+        @*<th>Company Name</th>*@
+        @*<th>Invoice Number</th>*@
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Production Date</th>
+        <th>Expiration Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            @*<th class="col-md-1">@item.Id</th>*@
+            @*<th class="col-md-1">@item.CompanyId</th>*@
+            <th class="col-md-1">@item.ProductProductCode</th>
+            <th class="col-md-1">@item.LotSerial</th>
+            @*<th class="col-md-2">@item.Barcode</th>*@
+            @*<th class="col-md-2">@item.EntryDate</th>
+            <th class="col-md-3">@item.CompanyName</th>
+            <th class="col-md-1">@item.InvoiceNumber</th>*@
+            <th class="col-md-3">@item.Description</th>
+            <th class="col-md-1">@item.Quantity</th>
+            <th class="col-md-2">@item.ProductionDate.ToShortDateString()</th>
+            <th class="col-md-2">@item.ExpirationDate.ToShortDateString()</th>
+            
+        </tr>
+    }
+    </tbody>
+</table>
+<a class="btn btn-secondary btn-sm" asp-action="Index">Geri Dön</a>
+
+

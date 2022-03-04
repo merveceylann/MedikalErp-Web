@@ -1,0 +1,296 @@
+﻿@model SlnErp102.Api.DTOs.Stocks.Products.ProductEntryDto
+@{
+
+    ViewData["Title"] = "Create";
+}
+<div class="col-12 mx-auto pt-0 p-0">
+    <div class="card">
+        <div class="card-header bg-primary text-uppercase text-white" style="height:45px;">
+            <h4>Create Invoice</h4>
+        </div>
+        <form id="Form" name="productForm" enctype="multipart/form-data" asp-action="Create">
+            <div class="container-fluid btn-group p-3">
+                <div class="col-12">
+                    <div class="row">
+                        <div asp-validation-summary=" ModelOnly" class="text-danger"></div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CompanyName" class="form-label"></label>
+                                <select asp-for="CompanyName"  name="CompanyName" class="form-control" asp-items="ViewBag.Company"></select>
+                                <span asp-validation-for="CompanyName" class=text-danger></span>
+                            </div>
+                        </div>
+
+                        @*<div class="col-md-6">
+                            <div asp-validation-summary=" ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                            <label asp-for="CompanyBranchName" class="control-label"></label>
+                            <select asp-for="CompanyBranchName" class="form-label" asp-items="ViewBag.CompanyBranchName"></select>
+                            <span asp-validation-for="CompanyBranchName" class=text-danger></span>
+                            </div>
+                            </div>*@
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="InvoiceNumber" class="form-label" value="Invoice Number"></label>
+                                <input asp-for="InvoiceNumber" name="InvoiceNumber" class="form-control" />
+                                <span asp-validation-for="InvoiceNumber" class=text-danger></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="EntryDate" class="form-label" value="Entry Date"></label>
+                                <input asp-for="EntryDate" name="EntryDate" class="form-control" type="date" />
+                                <span asp-validation-for="InvoiceNumber" class=text-danger></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="EntryTypeId" class="form-label" value="Entry Type"></label>
+                                <select asp-for="EntryTypeId" name="EntryTypeId" class="form-control" asp-items="ViewBag.EntryType"></select>
+                                <span asp-validation-for="EntryTypeId" class=text-danger></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label asp-for="Description" class="form-label" value="Description"></label>
+                                <input asp-for="Description" name="Description" class="form-control" />
+                                <span asp-validation-for="Description" class=text-danger></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="container col-12">
+                <div class="col-md-12" bg-light style="height:200px;overflow-y:auto">
+                    <table id="Table" class="table table-sm CodesTable">
+                        <thead>
+                            <tr>
+                                <th>Product Code</th>
+                                <th>Lot Serial Number</th>
+                                <th>Quantity</th>
+                                <th>Production Date</th>
+                                <th>DateExpiration Date</th>
+                                <th>
+                                    <button id='btnaddExperience' type="button" class="btn btn-sm btn-secondary visible"
+                                            onclick="AddItem(this)">
+                                        Add
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    @*<input asp-for="ProductProductCode" class="form-control"/>*@
+                                    <select id="product" class="form-control">
+                                        <option>Select</option>
+                                    </select>
+                                    <span class="error">Select product</span>
+                                </td>
+                                <td><input asp-for="LotSerial" class="form-control" /></td>
+                                <td><input asp-for="Quantity" class="form-control" /></td>
+                                <td><input asp-for="ProductionDate" class="form-control" /></td>
+                                <td><input asp-for="ExpirationDate" class="form-control" /></td>
+                                <td>
+                                    <button id='btnremove' type="button" class="btn btn-sm btn-danger visible"
+                                            onclick="DeleteItem(this)">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <input type="hidden" id="hdnLastIndex" value="0" />
+
+                <div class="col-12 btn-group">
+                    <div class="col-6 form-group text-right p-2">
+                        <a asp-action="Index" class="btn btn-secondary">&nbsp;Back&nbsp;</a>
+                        <input id="submit" type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    span.error {
+        display: block;
+        visibility: hidden;
+        color: red;
+        font-size: 90%;
+    }
+
+    tr.error {
+        background-color: rgba(255,0,0,0.35);
+    }
+</style>
+
+@section Scripts {
+	@{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+    
+    <script type="text/javascript">
+        var ProCode = [];
+
+        function LoadProduct(element) {
+            if (ProCode.length == 0) {
+                //ajax function for fetch data
+                $.ajax({
+                    type: "GET",
+                    url: '/ProductEntryApi/getProductCode',
+                    success: function(data) {
+                        ProCode = data;
+                        //render product
+                        renderProCode(element);
+                    }
+                });
+            }
+            else {
+                //render catagory to the element
+                renderProCode(element);
+            }
+        }
+
+
+        function renderProCode(element) {
+            var $ele = $(element);
+            $ele.empty();
+            $ele.append($('<option/>').val('0').text('Select'));
+            $.each(ProCode,
+                function(i, val) {
+                    $ele.append($('<option/>').val(val.id).text(val.productCode));
+                });
+
+        }
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+
+
+
+        function DeleteItem(btn) {
+            var table=document.getElementById('Table');
+            var rows = table.getElementsByTagName('tr');
+            if(rows.length===2){
+                alert("This row cannot be deleted");
+                return;
+            }
+            $(btn).closest('tr').remove();
+        }
+
+
+
+
+        $( "#Form" ).submit(function( event ) {
+             event.preventDefault();
+              var table = document.getElementById('Table');
+              var rows = table.getElementsByTagName('tr');
+
+
+              var products=[];
+
+             //Birden fazla satır içerisinden productları çektik ve diziye attık.
+                for (let i = 1; i < rows.length; i++){
+
+                    let rowContents = rows[i].getElementsByTagName('td');
+                    let col1= $(rowContents[0]).find('select').val();
+                    let col6= $(rowContents[0]).find('select').children(':selected').text();
+                    let col2 =$(rowContents[1]).find('input').val();
+                    let col3 =$(rowContents[2]).find('input').val();
+                    let col4 =$(rowContents[3]).find('input').val();
+                    let col5 =$(rowContents[4]).find('input').val();
+                    console.log('ProCodeKontrol' + col6);
+                    let data=
+                    {
+                        ProductId:col1,
+                        ProductCode:col6,
+                        LotSerial:col2,
+                        Quantity:col3,
+                        ProductionDate:col4,
+                        ExpirationDate:col5,
+                        Barcode:col6+'/'+col2
+
+                    }
+                    products.push(data);
+                }
+            //Form isminden verileri çektik ve içeirisne productları liste olarak gömdük.
+              var postData={
+                CompanyId:productForm.CompanyName.value,
+                CompanyName:$('select[name="CompanyName"]').children(':selected').text(),
+                InvoiceNumber:productForm.InvoiceNumber.value,
+                EntryDate:productForm.EntryDate.value,
+                EntryTypeId:productForm.EntryTypeId.value,
+                Description:productForm.Description.value,
+                Products:products
+              };
+              console.log(postData);
+           $.ajax({
+                type: "POST",
+                url: "https://localhost:7063/ProductEntryApi/save",
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Accept':'application/json'
+                },
+                body: JSON.stringify(postData),
+                data:JSON.stringify(postData),
+                success: function(data){
+                    if (data.status) {
+                        alert('Successfully saved');
+                        window.location.href = "https://localhost:7063/ProductEntryApi";
+                        
+                        //here we will clear the form
+                        //list = [];
+                        //$('#orderNo,#orderDate,#description').val('');
+                        //$('#orderdetailsItems').empty();
+                    }
+                    else {
+                        alert('Error ic');
+                    }
+                    $('#submit').text('Save');
+                    console.log("başardık.");
+                },
+                error: function (error) {
+                    console.log(error);
+                    $('#submit').text('Save');
+                }
+            });
+
+
+             });
+
+        function AddItem(btn) {
+
+            var table = document.getElementById('Table');
+            var rows = table.getElementsByTagName('tr');
+
+
+            var rowOuterHtml = rows[rows.length - 1].outerHTML;
+
+            var lastrowIdx = rows.length-1;
+
+            var nextrowIdx = eval(lastrowIdx);
+
+            rowOuterHtml = rowOuterHtml.replaceAll('_' + lastrowIdx + '_', '_' + nextrowIdx + '_');
+            rowOuterHtml = rowOuterHtml.replaceAll('[' + lastrowIdx + ']', '[' + nextrowIdx + ']');
+            rowOuterHtml = rowOuterHtml.replaceAll('-' + lastrowIdx, '-' + nextrowIdx);
+
+            var newRow = table.insertRow();
+            newRow.innerHTML = rowOuterHtml;
+        }
+
+
+        LoadProduct($('#product'));
+</script>
+    
+}

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SlnErp102.Api\SlnErp102.Api.csproj" />
+    <ProjectReference Include="..\SlnErp102.Core\SlnErp102.Core.csproj" />
+    <ProjectReference Include="..\SlnErp102.Data\SlnErp102.Data.csproj" />
+    <ProjectReference Include="..\SlnErp102.Service\SlnErp102.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ApiService\Infos\Hospitals\" />
+    <Folder Include="ApiService\Infos\Companies\" />
+    <Folder Include="ApiService\Infos\Employees\" />
+    <Folder Include="ApiService\Infos\Doctors\" />
+  </ItemGroup>
+
+</Project>
